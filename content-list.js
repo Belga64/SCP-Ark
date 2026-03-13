@@ -56,8 +56,105 @@ function atualizarIcons(list) {
   });
 }
 
-// Marcar lista ao carregar a página
-marcarListaSCP();
+// Função para aplicar filtro de exibição 
+
+function applyFilter(type) {
+
+  chrome.storage.local.get("scpList", (data) => {
+
+    const list = data.scpList || {};
+
+    const links = Array.from(
+      document.querySelectorAll("#page-content a[href*='/scp-']")
+    );
+
+    const items = links.map((link, index) => {
+
+      const match = link.href.match(/scp-(\d+)/);
+      if (!match) return null;
+
+      const scp = match[1];
+
+      const li = link.closest("li");
+      if (!li) return null;
+
+      // salvar índice original
+      if (!li.dataset.originalIndex) {
+        li.dataset.originalIndex = index;
+      }
+
+      return {
+        scp,
+        read: !!list[scp],
+        element: li,
+        originalIndex: parseInt(li.dataset.originalIndex)
+      };
+
+    }).filter(Boolean);
+
+    if (items.length === 0) return;
+
+    const container = items[0].element.parentElement;
+
+    let sorted = [...items];
+
+    if (type === "unreadFirst") {
+      sorted.sort((a, b) => a.read - b.read);
+    }
+
+    if (type === "readFirst") {
+      sorted.sort((a, b) => b.read - a.read);
+    }
+
+    if (type === "none") {
+      sorted.sort((a, b) => a.originalIndex - b.originalIndex);
+    }
+
+    sorted.forEach(item => {
+      container.appendChild(item.element);
+    });
+
+  });
+
+}
+
+
+
+// Filtro de pesquisa na página
+
+function createFilterPanel() {
+  if (document.getElementById("scpFilterPanel")) return;
+
+  const panel = document.createElement("div");
+  panel.id = "scpFilterPanel";
+
+  panel.style = `
+    position: sticky;
+    top: 0;
+    background: #111;
+    color: white;
+    padding: 8px;
+    z-index: 9999;
+    border-bottom: 1px solid #444;
+    font-size: 14px;
+  `;
+
+  panel.innerHTML = `
+    <strong>SCP Ark:</strong>
+    <button id="filterNone">No Filter</button>
+    <button id="filterUnreadFirst">Unread First</button>
+    <button id="filterReadFirst">Read First</button>
+  `;
+
+  document.body.prepend(panel);
+
+  document.getElementById("filterNone").onclick = () => applyFilter("none");
+  document.getElementById("filterUnreadFirst").onclick = () => applyFilter("unreadFirst");
+  document.getElementById("filterReadFirst").onclick = () => applyFilter("readFirst");
+}
+
+
+
 
 // Observer para páginas dinâmicas
 const observer = new MutationObserver(marcarListaSCP);
@@ -71,4 +168,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
+createFilterPanel();
+marcarListaSCP();
+
+
 })();
+
