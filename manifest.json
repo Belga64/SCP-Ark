@@ -1,0 +1,39 @@
+{
+    "manifest_version": 3,
+    "version": "0.0.1",
+    "permissions": ["storage"],
+    "name": "SCP Order",
+    "description": "List and organize the scps you have read",
+    "author": "Belga",
+
+
+    "action": {
+        "default_title": "SCP-O",
+        "default_popup": "popup.html"
+    },
+    
+
+  "content_scripts": [
+  {
+    "matches": ["*://scp-wiki.wikidot.com/scp-*"],
+    "js": ["content-scplist.js"]
+  },
+  {
+    "matches": ["*://scp-wiki.wikidot.com/scp-series*"],
+    "js": ["content-list.js"]
+  }
+],
+
+"web_accessible_resources": [
+  {
+    "resources": ["icons/*"],
+    "matches": ["*://scp-wiki.wikidot.com/*"]
+  }
+],
+
+
+    "background": {
+        "service_worker": "background.js"
+    }
+
+}
