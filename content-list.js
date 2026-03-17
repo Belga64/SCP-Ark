@@ -52,7 +52,7 @@ function atualizarIcons(list) {
     }
 
     icon.src = list[scp] ? iconRead : iconUnread;
-    icon.title = list[scp] ? "SCP lido (clique para desmarcar)" : "SCP não lido (clique para marcar)";
+    icon.title = list[scp] ? "SCP read (click to mark as unread)" : "SCP unread (click to mark as read)";
   });
 }
 
@@ -118,6 +118,24 @@ function applyFilter(type) {
 
 }
 
+// Função para destacar o botão de filtro ativo
+
+function setActiveFilterButton(activeId) {
+  document.querySelectorAll("#scpFilterPanel button").forEach(btn => {
+    btn.style.background = "#f4f4f4";
+    btn.style.color = "#000";
+    btn.style.border = "1px solid #999";
+  });
+
+  const active = document.getElementById(activeId);
+  if (active) {
+    active.style.background = "#222";
+    active.style.color = "#fff";
+    active.style.border = "1px solid #000";
+  }
+}
+
+
 
 
 // Filtro de pesquisa na página
@@ -137,6 +155,7 @@ function createFilterPanel() {
     z-index: 9999;
     border-bottom: 1px solid #444;
     font-size: 14px;
+    border-radius: 4px;
   `;
 
   panel.innerHTML = `
@@ -146,11 +165,45 @@ function createFilterPanel() {
     <button id="filterReadFirst">Read First</button>
   `;
 
-  document.body.prepend(panel);
+  // Posicionar o painel antes do primeiro header de série ou no topo da página
 
-  document.getElementById("filterNone").onclick = () => applyFilter("none");
-  document.getElementById("filterUnreadFirst").onclick = () => applyFilter("unreadFirst");
-  document.getElementById("filterReadFirst").onclick = () => applyFilter("readFirst");
+ const headers = Array.from(document.querySelectorAll("#page-content h2, #page-content h3"));
+
+ const firstSeriesHeader = headers.find(h => /\d{3}\s*to\s*\d{3}/i.test(h.textContent));
+
+ if (firstSeriesHeader) {
+    firstSeriesHeader.parentElement.insertBefore(panel, firstSeriesHeader);
+  } else {
+    document.querySelector("#page-content").prepend(panel);
+  }
+
+  // Estilo dos botões
+
+  panel.querySelectorAll("button").forEach(btn => {
+    btn.style.marginLeft = "6px";
+    btn.style.padding = "3px 8px";
+    btn.style.border = "1px solid #999";
+    btn.style.background = "#f4f4f4";
+    btn.style.borderRadius = "3px";
+    btn.style.cursor = "pointer";
+  });
+
+  // Eventos dos botões
+
+  document.getElementById("filterNone").onclick = () => {
+    applyFilter("none");
+    setActiveFilterButton("filterNone");
+  }
+  document.getElementById("filterUnreadFirst").onclick = () => {
+    applyFilter("unreadFirst")
+    setActiveFilterButton("filterUnreadFirst")
+  };
+  document.getElementById("filterReadFirst").onclick = () => {
+    applyFilter("readFirst");
+    setActiveFilterButton("filterReadFirst");
+  };
+
+  setActiveFilterButton("filterNone");
 }
 
 
