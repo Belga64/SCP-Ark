@@ -3,12 +3,12 @@
     "version": "0.0.1",
     "permissions": ["storage"],
     "name": "SCP Order",
-    "description": "List and organize the scps you have read",
+    "description": "List and organize the SCPSs you have read",
     "author": "Belga",
 
 
     "action": {
-        "default_title": "SCP-O",
+        "default_title": "SCP-Ark",
         "default_popup": "popup.html"
     },
     

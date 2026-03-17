@@ -8,7 +8,7 @@ function getSCPNumber() {
 
 let scp = getSCPNumber();
 if (!scp) {
-  console.log("Não é SCP");
+  console.log("Not an SCP");
 } else {
   iniciarDeteccao();
 }
@@ -69,10 +69,10 @@ function iniciarDeteccao() {
 
   function atualizarBotao() {
     if (marcado) {
-      btn.innerText = "❌ Desmarcar como lido";
+      btn.innerText = "❌ Mark as unread";
       btn.style.background = "crimson";
     } else {
-      btn.innerText = "✔ Marcar como lido";
+      btn.innerText = "✔ Mark as read";
       btn.style.background = "black";
     }
   }

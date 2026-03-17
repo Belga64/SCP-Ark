@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
 
       chrome.storage.local.set({ [STORAGE_KEY]: list }, () => {
-        console.log("SCP atualizado:", msg.scp, msg.value);
+        console.log("SCP updated:", msg.scp, msg.value);
         sendResponse({ ok: true });
       });
     });
