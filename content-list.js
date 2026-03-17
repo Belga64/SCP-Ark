@@ -7,14 +7,14 @@ const iconUnread = chrome.runtime.getURL("icons/unread.png");
 
 let cacheList = {}; // Cache local da lista para acesso rápido no content-scplist.js
 
-function marcarListaSCP() {
+function markSCPList() {
   chrome.storage.local.get(STORAGE_KEY, (data) => {
     cacheList = data[STORAGE_KEY] || {};
-    atualizarIcons(cacheList);
+    updateIcons(cacheList);
   });
 }
 
-function atualizarIcons(list) {
+function updateIcons(list) {
   const links = document.querySelectorAll('a[href*="/scp-"]');
 
   links.forEach(link => {
@@ -210,19 +210,19 @@ function createFilterPanel() {
 
 
 // Observer para páginas dinâmicas
-const observer = new MutationObserver(marcarListaSCP);
+const observer = new MutationObserver(markSCPList);
 observer.observe(document.body, { childList: true, subtree: true });
 
 // Atualizar ícones se a lista mudar (ex: popup.js)
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes[STORAGE_KEY]) {
     cacheList = changes[STORAGE_KEY].newValue || {};
-    atualizarIcons(cacheList);
+    updateIcons(cacheList);
   }
 });
 
 createFilterPanel();
-marcarListaSCP();
+markSCPList();
 
 
 })();

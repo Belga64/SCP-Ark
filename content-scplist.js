@@ -10,10 +10,10 @@ let scp = getSCPNumber();
 if (!scp) {
   console.log("Not an SCP");
 } else {
-  iniciarDeteccao();
+  initDetection();
 }
 
-function iniciarDeteccao() {
+function initDetection() {
 
   let marcado = false;
 
@@ -39,7 +39,7 @@ function iniciarDeteccao() {
     const list = data[STORAGE_KEY] || {};
 
     marcado = !!list[scp];
-    atualizarBotao();
+    updateButton();
   });
 
   // Scroll auto marcar (só se não marcado)
@@ -58,7 +58,7 @@ function iniciarDeteccao() {
 
   function marcar(valor) {
     marcado = valor;
-    atualizarBotao();
+    updateButton();
 
     chrome.runtime.sendMessage({
       scpToggle: true,
@@ -67,7 +67,7 @@ function iniciarDeteccao() {
     });
   }
 
-  function atualizarBotao() {
+  function updateButton() {
     if (marcado) {
       btn.innerText = "❌ Mark as unread";
       btn.style.background = "crimson";
