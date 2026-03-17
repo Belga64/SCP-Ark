@@ -20,3 +20,18 @@ label {
 input[type="checkbox"] {
   margin-right: 5px;
 }
+
+#tabs {
+  margin-bottom: 10px;
+}
+
+#tabs button {
+  margin-right: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+#tabs button.active {
+  background: black;
+  color: white;
+}

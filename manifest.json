@@ -13,6 +13,11 @@
     },
     
 
+    "host_permissions": [
+  "https://scp-wiki.wikidot.com/*"
+],
+
+
   "content_scripts": [
   {
     "matches": ["*://scp-wiki.wikidot.com/scp-*"],
