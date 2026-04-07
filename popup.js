@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
   let currentSeries = 1;
-
+  let currentFilter = "none"; // none, unreadFirst, readFirst
 
   // Fetch da lista de SCPs 
 
@@ -111,8 +111,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("scpList");
     container.innerHTML = "Loading...";
     
-    let scps = await getCachedSCPList();
-    scps = filterBySeries(scps);
+   let scps = await getCachedSCPList();
+   scps = filterBySeries(scps);
+
+   const data = await new Promise(resolve =>
+    chrome.storage.local.get(STORAGE_KEY, resolve)
+   );
+   
+   const list = data[STORAGE_KEY] || {};
+
+     scps = applyReadFilter(scps, list);
+
+  
 
     container.innerHTML = "";
 
@@ -159,6 +169,24 @@ document.querySelectorAll("#tabs button").forEach(btn => {
 // botão padrão
 document.querySelector('#tabs button[data-range="1"]').classList.add("active");
 
+// Eventos dos  filtros de leitura
+document.querySelectorAll("#filters button").forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    currentFilter = btn.dataset.filter;
+
+    //botão ativo
+    document.querySelectorAll("#filters button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    renderList(document.getElementById("search").value);
+  });
+});
+
+// padrão sem filtro
+document.querySelector('#filters button[data-filter="none"]').classList.add("active");
+
+
 
   // Inicialização
 
@@ -176,6 +204,21 @@ document.querySelector('#tabs button[data-range="1"]').classList.add("active");
       return num >= start && num <= end;
     });
   }
+
+  function applyReadFilter(scps, list) {
+    let result = [...scps];
+
+    if (currentFilter === "unreadFirst") {
+      result.sort((a, b) => (list[a] ? 1 : 0) - (list[b] ? 1 : 0));
+    }
+
+    if (currentFilter === "readFirst") {
+      result.sort((a, b) => (list[b] ? 1 : 0) - (list[a] ? 1 : 0));
+    }
+
+    return result;
+  }
+
 
 
 });
