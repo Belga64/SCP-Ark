@@ -53,7 +53,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return [...new Set(scps)].sort((a, b) => a - b);
   }
+  function animateListUpdate(callback) {
+    const container = document.getElementById("scpList");
 
+    // inicia fade out
+    container.classList.add("fade-out");
+
+    // espera a animação terminar
+    setTimeout(() => {
+      callback(); // atualiza conteúdo
+
+      // força reflow (ESSENCIAL pra evitar glitch)
+      void container.offsetHeight;
+
+      // remove fade-out e aplica fade-in
+      container.classList.remove("fade-out");
+      container.classList.add("fade-in");
+
+      setTimeout(() => {
+        container.classList.remove("fade-in");
+      }, 200);
+
+    }, 200);
+  }
   // Cache da lista para evitar fetchs repetidos
 
   function getCachedSCPList() {
@@ -109,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function renderList(filter = "") {
     const container = document.getElementById("scpList");
-    container.innerHTML = "Loading...";
+    container.innerHTML = "";
     
    let scps = await getCachedSCPList();
    scps = filterBySeries(scps);
@@ -162,10 +184,9 @@ document.querySelectorAll("#tabs button").forEach(btn => {
     btn.classList.add("active");
 
     const searchValue = document.getElementById("search").value;
-    renderList(searchValue);
+    animateListUpdate(() => renderList(searchValue));
   });
 });
-
 // botão padrão
 document.querySelector('#tabs button[data-range="1"]').classList.add("active");
 
@@ -179,7 +200,7 @@ document.querySelectorAll("#filters button").forEach(btn => {
     document.querySelectorAll("#filters button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    renderList(document.getElementById("search").value);
+    animateListUpdate(() => renderList(document.getElementById("search").value));
   });
 });
 
@@ -218,6 +239,7 @@ document.querySelector('#filters button[data-filter="none"]').classList.add("act
 
     return result;
   }
+
 
 
 
